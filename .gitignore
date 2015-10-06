@@ -11,3 +11,6 @@ output*
 .checkstyle
 
 .DS_Store
+
+.idea/
+*.iml
