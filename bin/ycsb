@@ -24,7 +24,7 @@ import shlex
 import sys
 import subprocess
 
-BASE_URL = "https://github.com/brianfrankcooper/YCSB/tree/master/"
+BASE_URL = "https://github.com/ricardobcl/YCSB/tree/master/"
 COMMANDS = {
     "shell" : {
         "command"     : "",
@@ -44,32 +44,33 @@ COMMANDS = {
 }
 
 DATABASES = {
-    "accumulo"     : "com.yahoo.ycsb.db.AccumuloClient",
-    "aerospike"    : "com.yahoo.ycsb.db.AerospikeClient",
+    # "accumulo"     : "com.yahoo.ycsb.db.AccumuloClient",
+    # "aerospike"    : "com.yahoo.ycsb.db.AerospikeClient",
     "basic"        : "com.yahoo.ycsb.BasicDB",
-    "cassandra-7"  : "com.yahoo.ycsb.db.CassandraClient7",
-    "cassandra-8"  : "com.yahoo.ycsb.db.CassandraClient8",
-    "cassandra-10" : "com.yahoo.ycsb.db.CassandraClient10",
-    "cassandra-cql": "com.yahoo.ycsb.db.CassandraCQLClient",
-    "couchbase"    : "com.yahoo.ycsb.db.CouchbaseClient",
-    "dynamodb"     : "com.yahoo.ycsb.db.DynamoDBClient",
-    "elasticsearch": "com.yahoo.ycsb.db.ElasticSearchClient",
+    # "cassandra-7"  : "com.yahoo.ycsb.db.CassandraClient7",
+    # "cassandra-8"  : "com.yahoo.ycsb.db.CassandraClient8",
+    # "cassandra-10" : "com.yahoo.ycsb.db.CassandraClient10",
+    # "cassandra-cql": "com.yahoo.ycsb.db.CassandraCQLClient",
+    # "couchbase"    : "com.yahoo.ycsb.db.CouchbaseClient",
+    # "dynamodb"     : "com.yahoo.ycsb.db.DynamoDBClient",
+    # "elasticsearch": "com.yahoo.ycsb.db.ElasticSearchClient",
     "gemfire"      : "com.yahoo.ycsb.db.GemFireClient",
-    "hbase094"     : "com.yahoo.ycsb.db.HBaseClient",
-    "hbase098"     : "com.yahoo.ycsb.db.HBaseClient",
-    "hbase10"      : "com.yahoo.ycsb.db.HBaseClient10",
-    "hypertable"   : "com.yahoo.ycsb.db.HypertableClient",
-    "infinispan-cs": "com.yahoo.ycsb.db.InfinispanRemoteClient",
-    "infinispan"   : "com.yahoo.ycsb.db.InfinispanClient",
+    # "hbase094"     : "com.yahoo.ycsb.db.HBaseClient",
+    # "hbase098"     : "com.yahoo.ycsb.db.HBaseClient",
+    # "hbase10"      : "com.yahoo.ycsb.db.HBaseClient10",
+    # "hypertable"   : "com.yahoo.ycsb.db.HypertableClient",
+    # "infinispan-cs": "com.yahoo.ycsb.db.InfinispanRemoteClient",
+    # "infinispan"   : "com.yahoo.ycsb.db.InfinispanClient",
     "jdbc"         : "com.yahoo.ycsb.db.JdbcDBClient",
-    "mapkeeper"    : "com.yahoo.ycsb.db.MapKeeperClient",
-    "mongodb"      : "com.yahoo.ycsb.db.MongoDbClient",
-    "mongodb-async": "com.yahoo.ycsb.db.AsyncMongoDbClient",
-    "nosqldb"      : "com.yahoo.ycsb.db.NoSqlDbClient",
-    "orientdb"     : "com.yahoo.ycsb.db.OrientDBClient",
+    # "mapkeeper"    : "com.yahoo.ycsb.db.MapKeeperClient",
+    # "mongodb"      : "com.yahoo.ycsb.db.MongoDbClient",
+    # "mongodb-async": "com.yahoo.ycsb.db.AsyncMongoDbClient",
+    # "nosqldb"      : "com.yahoo.ycsb.db.NoSqlDbClient",
+    # "orientdb"     : "com.yahoo.ycsb.db.OrientDBClient",
     "redis"        : "com.yahoo.ycsb.db.RedisClient",
-    "tarantool"    : "com.yahoo.ycsb.db.TarantoolClient",
-    "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient"
+    # "tarantool"    : "com.yahoo.ycsb.db.TarantoolClient",
+    "dotteddb"     : "com.yahoo.ycsb.db.DottedDB"
+    # "voldemort"    : "com.yahoo.ycsb.db.VoldemortClient"
 }
 
 OPTIONS = {
@@ -155,7 +156,7 @@ def get_classpath_from_maven(database):
         error("Attempting to generate a classpath from Maven failed "
               "with return code '" + str(err.returncode) + "'. The output from "
               "Maven follows, try running "
-              "'mvn -DskipTests package dependency:build=classpath' on your "
+              "'mvn -DskipTests package dependency:build-classpath' on your "
               "own and correct errors." + os.linesep + os.linesep + "mvn output:" + os.linesep
               + err.output)
         sys.exit(err.returncode)

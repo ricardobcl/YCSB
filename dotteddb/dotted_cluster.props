@@ -1,0 +1,9 @@
+
+db=com.yahoo.ycsb.DottedDB
+maxexecutiontime=60
+recordcount=10000
+threadcount=10
+fieldcount=1
+
+dotted_cluster_hosts=192.168.112.138:8097, 192.168.112.139:8097, 192.168.112.140:8097, 192.168.112.155:8097, 192.168.112.156:8097
+
