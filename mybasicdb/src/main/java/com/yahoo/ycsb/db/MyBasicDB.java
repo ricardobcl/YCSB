@@ -20,15 +20,15 @@ import java.net.*;
 import java.util.*;
 import java.util.Properties;
 
-public class DottedDB extends DB {
+public class MyBasicDB extends DB {
 
     public static final int OK = 0;
     public static final int ERROR = -1;
 
     public static final int BUFFER_SIZE = 1024 * 10;
 
-    public static final String DOTTED_CLUSTER_HOSTS = "dotted_cluster_hosts";
-    public static final String DOTTED_CLUSTER_HOST_DEFAULT = "127.0.0.1:10017";
+    public static final String BASIC_CLUSTER_HOSTS = "basic_cluster_hosts";
+    public static final String BASIC_CLUSTER_HOST_DEFAULT = "127.0.0.1:10017";
 
     private ArrayList<Server> servers = null;
     private Random randomGenerator;
@@ -93,12 +93,12 @@ public class DottedDB extends DB {
         try {
             this.randomGenerator = new Random();
             Properties props = getProperties();
-            String cluster_hosts = props.getProperty(DOTTED_CLUSTER_HOSTS, DOTTED_CLUSTER_HOST_DEFAULT);
+            String cluster_hosts = props.getProperty(BASIC_CLUSTER_HOSTS, BASIC_CLUSTER_HOST_DEFAULT);
             String[] hosts = cluster_hosts.split(",");
             setupConnection(props, hosts);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DBException("Error connecting to DottedDB: " + e.getMessage());
+            throw new DBException("Error connecting to MyBasicDB: " + e.getMessage());
         }
     }
 
@@ -252,7 +252,7 @@ public class DottedDB extends DB {
             String[] ipAndPort = h.split(":");
             String ip = ipAndPort[0].trim();
             int port = Integer.parseInt(ipAndPort[1].trim());
-            System.out.println("Dotted connection to " + ip + ":" + port);
+            System.out.println("MyBasicDB connection to " + ip + ":" + port);
             Server s = new Server();
             try {
                 s.socket = new Socket(ip, port);

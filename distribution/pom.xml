@@ -129,6 +129,11 @@ LICENSE file.
       <artifactId>dotteddb-binding</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.yahoo.ycsb</groupId>
+      <artifactId>mybasicdb-binding</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 <!--
     <dependency>
       <groupId>com.yahoo.ycsb</groupId>

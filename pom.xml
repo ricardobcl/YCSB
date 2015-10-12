@@ -73,6 +73,7 @@ LICENSE file.
     <openjpa.jdbc.version>2.1.1</openjpa.jdbc.version>
     <!--<mapkeeper.version>1.0</mapkeeper.version>-->
     <dotteddb.version>1.0</dotteddb.version>
+    <mybasicdb.version>1.0</mybasicdb.version>
     <redis.version>2.0.0</redis.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <thrift.version>0.8.0</thrift.version>
@@ -99,6 +100,7 @@ LICENSE file.
     <module>jdbc</module>
     <!--<module>mapkeeper</module>-->
     <module>dotteddb</module>
+    <module>mybasicdb</module>
     <!-- <module>mongodb</module> -->
     <!--module>nosqldb</module-->
     <!-- <module>orientdb</module> -->
