@@ -2,6 +2,7 @@
 db=com.yahoo.ycsb.DottedDB
 maxexecutiontime=60
 recordcount=1000
+operationcount=3000
 threadcount=3
 fieldcount=1
 

@@ -203,6 +203,16 @@ public class CoreWorkload extends Workload
 	public static final String UPDATE_PROPORTION_PROPERTY_DEFAULT="0.05";
 
 	/**
+	 * The name of the property for the proportion of transactions that are updates.
+	 */
+	public static final String DELETE_PROPORTION_PROPERTY="deleteproportion";
+	
+	/**
+	 * The default proportion of transactions that are updates.
+	 */
+	public static final String DELETE_PROPORTION_PROPERTY_DEFAULT="0.05";
+
+	/**
 	 * The name of the property for the proportion of transactions that are inserts.
 	 */
 	public static final String INSERT_PROPORTION_PROPERTY="insertproportion";
@@ -350,6 +360,7 @@ public class CoreWorkload extends Workload
 		
 		double readproportion=Double.parseDouble(p.getProperty(READ_PROPORTION_PROPERTY,READ_PROPORTION_PROPERTY_DEFAULT));
 		double updateproportion=Double.parseDouble(p.getProperty(UPDATE_PROPORTION_PROPERTY,UPDATE_PROPORTION_PROPERTY_DEFAULT));
+		double deleteproportion=Double.parseDouble(p.getProperty(DELETE_PROPORTION_PROPERTY,DELETE_PROPORTION_PROPERTY_DEFAULT));
 		double insertproportion=Double.parseDouble(p.getProperty(INSERT_PROPORTION_PROPERTY,INSERT_PROPORTION_PROPERTY_DEFAULT));
 		double scanproportion=Double.parseDouble(p.getProperty(SCAN_PROPORTION_PROPERTY,SCAN_PROPORTION_PROPERTY_DEFAULT));
 		double readmodifywriteproportion=Double.parseDouble(p.getProperty(READMODIFYWRITE_PROPORTION_PROPERTY,READMODIFYWRITE_PROPORTION_PROPERTY_DEFAULT));
@@ -401,6 +412,11 @@ public class CoreWorkload extends Workload
 		if (updateproportion>0)
 		{
 			operationchooser.addValue(updateproportion,"UPDATE");
+		}
+
+		if (deleteproportion>0)
+		{
+			operationchooser.addValue(deleteproportion,"DELETE");
 		}
 
 		if (insertproportion>0)
@@ -569,6 +585,10 @@ public class CoreWorkload extends Workload
 		else if (op.compareTo("UPDATE")==0)
 		{
 			doTransactionUpdate(db);
+		}
+		else if (op.compareTo("DELETE")==0)
+		{
+			doTransactionDelete(db);
 		}
 		else if (op.compareTo("INSERT")==0)
 		{
@@ -753,6 +773,14 @@ public class CoreWorkload extends Workload
 		}
 
 		db.update(table,keyname,values);
+	}
+
+	public void doTransactionDelete(DB db)
+	{
+		//choose a random key
+		int keynum = nextKeynum();
+		String keyname=buildKeyName(keynum);
+		db.delete(table,keyname);
 	}
 
 	public void doTransactionInsert(DB db)
