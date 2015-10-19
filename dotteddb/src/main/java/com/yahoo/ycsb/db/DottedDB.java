@@ -26,9 +26,16 @@ public class DottedDB extends DB {
     public static final int ERROR = -1;
 
     public static final int BUFFER_SIZE = 1024 * 10;
+    public static final int BUFFER_SIZE_OK = 128;
 
-    public static final String DOTTED_CLUSTER_HOSTS = "dotted_cluster_hosts";
-    public static final String DOTTED_CLUSTER_HOST_DEFAULT = "127.0.0.1:10017";
+    public static final String DOTTED_NODE_FAILURE_RATE                 = "dotted_node_failure_rate";
+    public static final String DOTTED_NODE_FAILURE_RATE_DEFAULT         = "0";
+    public static final String DOTTED_REPLICATION_FAILURE_RATE          = "dotted_replication_failure_rate";
+    public static final String DOTTED_REPLICATION_FAILURE_RATE_DEFAULT  = "0";
+    public static final String DOTTED_SYNC_INTERVAL                     = "dotted_sync_interval";
+    public static final String DOTTED_SYNC_INTERVAL_DEFAULT             = "200";
+    public static final String DOTTED_CLUSTER_HOSTS                     = "dotted_cluster_hosts";
+    public static final String DOTTED_CLUSTER_HOST_DEFAULT              = "127.0.0.1:10017";
 
     private ArrayList<Server> servers = null;
     private Random randomGenerator;
@@ -38,6 +45,15 @@ public class DottedDB extends DB {
         public Socket socket = null;
         public DataOutputStream out = null;
         public DataInputStream in = null;
+    }
+
+    @Message // Annotation
+    public static class OPTIONS {
+        // public fields are serialized.
+        public String code = "OPTIONS";
+        public int sync_interval;
+        public float replication_failure_rate;
+        public int node_failure_rate;
     }
 
     @Message // Annotation
@@ -89,13 +105,18 @@ public class DottedDB extends DB {
 
     @Override
     public void init() throws DBException {
-
         try {
             this.randomGenerator = new Random();
             Properties props = getProperties();
+            // get the list of ip:port machines
             String cluster_hosts = props.getProperty(DOTTED_CLUSTER_HOSTS, DOTTED_CLUSTER_HOST_DEFAULT);
             String[] hosts = cluster_hosts.split(",");
             setupConnection(props, hosts);
+            // get the (replication and node) failure rates and sync interval
+            String sync      = props.getProperty(DOTTED_SYNC_INTERVAL, DOTTED_SYNC_INTERVAL_DEFAULT);
+            String fail_repl = props.getProperty(DOTTED_REPLICATION_FAILURE_RATE, DOTTED_REPLICATION_FAILURE_RATE_DEFAULT);
+            String fail_node = props.getProperty(DOTTED_NODE_FAILURE_RATE, DOTTED_NODE_FAILURE_RATE_DEFAULT);
+            setDBOptions(sync, fail_repl, fail_node);
         } catch (Exception e) {
             e.printStackTrace();
             throw new DBException("Error connecting to DottedDB: " + e.getMessage());
@@ -151,7 +172,7 @@ public class DottedDB extends DB {
             byte[] raw = msgpack.write(put);
             s.out.write(raw);
 
-            byte[] res = new byte[BUFFER_SIZE];
+            byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
@@ -181,7 +202,7 @@ public class DottedDB extends DB {
             byte[] raw = msgpack.write(put);
             s.out.write(raw);
 
-            byte[] res = new byte[BUFFER_SIZE];
+            byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
@@ -210,7 +231,7 @@ public class DottedDB extends DB {
             byte[] raw = msgpack.write(put);
             s.out.write(raw);
 
-            byte[] res = new byte[BUFFER_SIZE];
+            byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
@@ -232,6 +253,8 @@ public class DottedDB extends DB {
 
     @Override
     public void cleanup() throws DBException {
+        // turn off killing nodes
+        setDBOptions(DOTTED_SYNC_INTERVAL_DEFAULT, DOTTED_REPLICATION_FAILURE_RATE_DEFAULT, "0");
         try {
             for(Server s : this.servers) {
                 s.out.close();
@@ -268,6 +291,37 @@ public class DottedDB extends DB {
         }
     }
 
+    private void setDBOptions(String sync_str, String fail_repl_str, String fail_node_str) {
+        try {
+            int sync = Integer.parseInt(sync_str.trim());
+            float repl = Float.parseFloat(fail_repl_str.trim());
+            int node = Integer.parseInt(fail_node_str.trim());
+            for(Server s : this.servers) {
+                String hostName = s.socket.getInetAddress().getHostName();
+                String host = hostName + ":" + s.socket.getPort();
+                OPTIONS opt = new OPTIONS();
+                opt.sync_interval = sync;
+                opt.replication_failure_rate = repl;
+                opt.node_failure_rate = node;
+
+                MessagePack msgpack = new MessagePack();
+                byte[] raw = msgpack.write(opt);
+                s.out.write(raw);
+
+                byte[] res = new byte[BUFFER_SIZE_OK];
+                int len = s.in.read(res);
+                byte[] res2 = Arrays.copyOf(res, len);
+                UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
+                if(res3.status.equals("OK")) {
+                    System.out.println("OPTIONS for |"+host+"| => sync:"+sync+" repl fail:"+repl+" node fail:"+node);
+                } else {
+                    System.out.println("OPTIONS not set for |"+host+"|");
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     private HashMap<String, byte[]> serialize(Map<String,ByteIterator> values) {
       HashMap<String, byte[]> retVal = new HashMap<String, byte[]>();
