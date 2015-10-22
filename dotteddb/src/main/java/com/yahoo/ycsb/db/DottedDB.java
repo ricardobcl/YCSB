@@ -34,6 +34,8 @@ public class DottedDB extends DB {
     public static final String DOTTED_REPLICATION_FAILURE_RATE_DEFAULT  = "0";
     public static final String DOTTED_SYNC_INTERVAL                     = "dotted_sync_interval";
     public static final String DOTTED_SYNC_INTERVAL_DEFAULT             = "200";
+    public static final String DOTTED_STRIP_INTERVAL                    = "dotted_strip_interval";
+    public static final String DOTTED_STRIP_INTERVAL_DEFAULT            = "2000";
     public static final String DOTTED_CLUSTER_HOSTS                     = "dotted_cluster_hosts";
     public static final String DOTTED_CLUSTER_HOST_DEFAULT              = "127.0.0.1:10017";
 
@@ -52,6 +54,7 @@ public class DottedDB extends DB {
         // public fields are serialized.
         public String code = "OPTIONS";
         public int sync_interval;
+        public int strip_interval;
         public float replication_failure_rate;
         public int node_failure_rate;
     }
@@ -112,11 +115,12 @@ public class DottedDB extends DB {
             String cluster_hosts = props.getProperty(DOTTED_CLUSTER_HOSTS, DOTTED_CLUSTER_HOST_DEFAULT);
             String[] hosts = cluster_hosts.split(",");
             setupConnection(props, hosts);
-            // get the (replication and node) failure rates and sync interval
+            // get the (replication and node) failure rates, sync interval and strip interval
             String sync      = props.getProperty(DOTTED_SYNC_INTERVAL, DOTTED_SYNC_INTERVAL_DEFAULT);
+            String strip     = props.getProperty(DOTTED_STRIP_INTERVAL, DOTTED_STRIP_INTERVAL);
             String fail_repl = props.getProperty(DOTTED_REPLICATION_FAILURE_RATE, DOTTED_REPLICATION_FAILURE_RATE_DEFAULT);
             String fail_node = props.getProperty(DOTTED_NODE_FAILURE_RATE, DOTTED_NODE_FAILURE_RATE_DEFAULT);
-            setDBOptions(sync, fail_repl, fail_node);
+            setDBOptions(sync, strip, fail_repl, fail_node);
         } catch (Exception e) {
             e.printStackTrace();
             throw new DBException("Error connecting to DottedDB: " + e.getMessage());
@@ -254,7 +258,7 @@ public class DottedDB extends DB {
     @Override
     public void cleanup() throws DBException {
         // turn off killing nodes
-        setDBOptions(DOTTED_SYNC_INTERVAL_DEFAULT, DOTTED_REPLICATION_FAILURE_RATE_DEFAULT, "0");
+        setDBOptions(DOTTED_SYNC_INTERVAL_DEFAULT, DOTTED_STRIP_INTERVAL_DEFAULT, DOTTED_REPLICATION_FAILURE_RATE_DEFAULT, "0");
         try {
             for(Server s : this.servers) {
                 s.out.close();
@@ -291,9 +295,10 @@ public class DottedDB extends DB {
         }
     }
 
-    private void setDBOptions(String sync_str, String fail_repl_str, String fail_node_str) {
+    private void setDBOptions(String sync_str, String strip_str, String fail_repl_str, String fail_node_str) {
         try {
             int sync = Integer.parseInt(sync_str.trim());
+            int strip = Integer.parseInt(strip_str.trim());
             float repl = Float.parseFloat(fail_repl_str.trim());
             int node = Integer.parseInt(fail_node_str.trim());
             for(Server s : this.servers) {
@@ -301,6 +306,7 @@ public class DottedDB extends DB {
                 String host = hostName + ":" + s.socket.getPort();
                 OPTIONS opt = new OPTIONS();
                 opt.sync_interval = sync;
+                opt.strip_interval = strip;
                 opt.replication_failure_rate = repl;
                 opt.node_failure_rate = node;
 
@@ -313,7 +319,7 @@ public class DottedDB extends DB {
                 byte[] res2 = Arrays.copyOf(res, len);
                 UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
                 if(res3.status.equals("OK")) {
-                    System.out.println("OPTIONS for |"+host+"| => sync:"+sync+" repl fail:"+repl+" node fail:"+node);
+                    System.out.println("OPTIONS for |"+host+"| => sync:"+sync+" strip:"+strip+" repl fail:"+repl+" node fail:"+node);
                 } else {
                     System.out.println("OPTIONS not set for |"+host+"|");
                 }
