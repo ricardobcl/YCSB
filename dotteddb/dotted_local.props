@@ -1,14 +1,14 @@
 
 db=com.yahoo.ycsb.DottedDB
 maxexecutiontime=60
-recordcount=1000
+recordcount=2000
 operationcount=3000
 threadcount=3
 fieldcount=1
 
 dotted_cluster_hosts=127.0.0.1:10017, 127.0.0.1:10027, 127.0.0.1:10037, 127.0.0.1:10047
-dotted_node_failure_rate=10000
+dotted_node_failure_rate=0
 dotted_replication_failure_rate=1
-dotted_sync_interval=250
+dotted_sync_interval=50
 dotted_strip_interval=2500
 
