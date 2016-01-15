@@ -28,12 +28,12 @@ public class MyBasicDB extends DB {
     public static final int BUFFER_SIZE = 1024 * 10;
     public static final int BUFFER_SIZE_OK = 128;
 
-    public static final String BASIC_NODE_FAILURE_RATE                 = "basic_node_failure_rate";
-    public static final String BASIC_NODE_FAILURE_RATE_DEFAULT         = "0";
-    public static final String BASIC_REPLICATION_FAILURE_RATE          = "basic_replication_failure_rate";
-    public static final String BASIC_REPLICATION_FAILURE_RATE_DEFAULT  = "0";
-    public static final String BASIC_SYNC_INTERVAL                     = "basic_sync_interval";
-    public static final String BASIC_SYNC_INTERVAL_DEFAULT             = "200";
+    public static final String BASIC_NODE_FAILURE_RATE                  = "basic_node_failure_rate";
+    public static final String BASIC_NODE_FAILURE_RATE_DEFAULT          = "0";
+    public static final String BASIC_REPLICATION_FAILURE_RATE           = "basic_replication_failure_rate";
+    public static final String BASIC_REPLICATION_FAILURE_RATE_DEFAULT   = "0";
+    public static final String BASIC_SYNC_INTERVAL                      = "basic_sync_interval";
+    public static final String BASIC_SYNC_INTERVAL_DEFAULT              = "2000";
     public static final String BASIC_CLUSTER_HOSTS                      = "basic_cluster_hosts";
     public static final String BASIC_CLUSTER_HOST_DEFAULT               = "127.0.0.1:10017";
 
@@ -142,6 +142,7 @@ public class MyBasicDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             GET_RESPONSE res3 = msgpack.read(res2, GET_RESPONSE.class);
             // System.out.println("1: Received : st: " + res3.status + " val:" + res3.value.toString());
@@ -175,6 +176,7 @@ public class MyBasicDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
             if(res3.status.equals("OK")) {
@@ -205,6 +207,7 @@ public class MyBasicDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
             if(res3.status.equals("OK")) {
@@ -234,6 +237,7 @@ public class MyBasicDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
             if(res3.status.equals("OK")) {
@@ -311,6 +315,7 @@ public class MyBasicDB extends DB {
 
                 byte[] res = new byte[BUFFER_SIZE_OK];
                 int len = s.in.read(res);
+                if(len == -1) return;
                 byte[] res2 = Arrays.copyOf(res, len);
                 UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
                 if(res3.status.equals("OK")) {

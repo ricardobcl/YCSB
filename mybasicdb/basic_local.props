@@ -1,12 +1,13 @@
 
 db=com.yahoo.ycsb.MyBasicDB
 maxexecutiontime=60
-recordcount=1000
+recordcount=2000
+operationcount=3000
 threadcount=3
 fieldcount=1
 
 basic_cluster_hosts=127.0.0.1:10017, 127.0.0.1:10027, 127.0.0.1:10037, 127.0.0.1:10047
-basic_node_failure_rate=10000
-basic_replication_failure_rate=0.5
+basic_node_failure_rate=0
+basic_replication_failure_rate=0.1
 basic_sync_interval=500
 
