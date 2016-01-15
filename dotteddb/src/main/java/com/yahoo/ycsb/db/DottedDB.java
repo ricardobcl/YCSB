@@ -117,7 +117,7 @@ public class DottedDB extends DB {
             setupConnection(props, hosts);
             // get the (replication and node) failure rates, sync interval and strip interval
             String sync      = props.getProperty(DOTTED_SYNC_INTERVAL, DOTTED_SYNC_INTERVAL_DEFAULT);
-            String strip     = props.getProperty(DOTTED_STRIP_INTERVAL, DOTTED_STRIP_INTERVAL);
+            String strip     = props.getProperty(DOTTED_STRIP_INTERVAL, DOTTED_STRIP_INTERVAL_DEFAULT);
             String fail_repl = props.getProperty(DOTTED_REPLICATION_FAILURE_RATE, DOTTED_REPLICATION_FAILURE_RATE_DEFAULT);
             String fail_node = props.getProperty(DOTTED_NODE_FAILURE_RATE, DOTTED_NODE_FAILURE_RATE_DEFAULT);
             setDBOptions(sync, strip, fail_repl, fail_node);
