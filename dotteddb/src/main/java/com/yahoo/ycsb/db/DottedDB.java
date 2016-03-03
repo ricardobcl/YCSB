@@ -279,7 +279,7 @@ public class DottedDB extends DB {
             String[] ipAndPort = h.split(":");
             String ip = ipAndPort[0].trim();
             int port = Integer.parseInt(ipAndPort[1].trim());
-            System.out.println("Dotted connection to " + ip + ":" + port);
+            // System.out.println("Dotted connection to " + ip + ":" + port);
             Server s = new Server();
             try {
                 s.socket = new Socket(ip, port);
@@ -319,7 +319,7 @@ public class DottedDB extends DB {
                 byte[] res2 = Arrays.copyOf(res, len);
                 UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
                 if(res3.status.equals("OK")) {
-                    System.out.println("OPTIONS for |"+host+"| => sync:"+sync+" strip:"+strip+" repl fail:"+repl+" node fail:"+node);
+                    // System.out.println("OPTIONS for |"+host+"| => sync:"+sync+" strip:"+strip+" repl fail:"+repl+" node fail:"+node);
                 } else {
                     System.out.println("OPTIONS not set for |"+host+"|");
                 }
