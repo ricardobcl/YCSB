@@ -145,6 +145,7 @@ public class DottedDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             GET_RESPONSE res3 = msgpack.read(res2, GET_RESPONSE.class);
             // System.out.println("1: Received : st: " + res3.status + " val:" + res3.value.toString());
@@ -178,6 +179,7 @@ public class DottedDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
             if(res3.status.equals("OK")) {
@@ -208,6 +210,7 @@ public class DottedDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
             if(res3.status.equals("OK")) {
@@ -237,6 +240,7 @@ public class DottedDB extends DB {
 
             byte[] res = new byte[BUFFER_SIZE_OK];
             int len = s.in.read(res);
+            if(len == -1) return ERROR;
             byte[] res2 = Arrays.copyOf(res, len);
             UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
             if(res3.status.equals("OK")) {
@@ -316,6 +320,7 @@ public class DottedDB extends DB {
 
                 byte[] res = new byte[BUFFER_SIZE_OK];
                 int len = s.in.read(res);
+                if(len == -1) return;
                 byte[] res2 = Arrays.copyOf(res, len);
                 UPD_RESPONSE res3 = msgpack.read(res2, UPD_RESPONSE.class);
                 if(res3.status.equals("OK")) {
